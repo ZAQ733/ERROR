@@ -2,7 +2,7 @@
 <html lang="mn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>PC Bang Control</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -45,6 +45,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,
 .ic-sd{border-color:rgba(239,68,68,.4);color:var(--danger)}
 .ic-msg{border-color:rgba(245,158,11,.4);color:var(--yellow)}
 .ic-cmd{border-color:rgba(59,130,246,.4);color:var(--accent)}
+.ic-screen{border-color:rgba(34,197,94,.4);color:var(--green)}
 .ic-del{border-color:rgba(100,116,139,.3);color:var(--muted)}
 .empty{text-align:center;padding:40px 20px;color:var(--muted)}
 .empty-icon{font-size:36px;margin-bottom:10px}
@@ -74,6 +75,11 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,
 .setup-btn{width:100%;background:var(--accent);border:none;color:white;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px}
 .setup-divider{border:none;border-top:1px solid var(--border);margin:4px 0 16px}
 .setup-hint{font-size:12px;color:var(--muted);margin-top:-10px;margin-bottom:16px;padding:0 2px}
+/* SCREEN MODAL STYLES */
+.screen-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:.3s}
+.screen-modal.show{opacity:1;pointer-events:all}
+.screen-modal img{max-width:95%;max-height:95%;border-radius:12px}
+.screen-modal .close{position:absolute;top:20px;right:30px;font-size:30px;cursor:pointer;color:#fff}
 </style>
 </head>
 <body>
@@ -136,6 +142,12 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,
       <button class="modal-confirm" id="modalConfirm" onclick="doConfirm()">Тийм</button>
     </div>
   </div>
+</div>
+
+<!-- SCREEN MODAL HTML -->
+<div class="screen-modal" id="screenModal" onclick="closeScreen()">
+  <span class="close">&times;</span>
+  <img id="screenImage" src="" alt="Screen">
 </div>
 
 <div class="toast" id="toast"></div>
@@ -239,6 +251,7 @@ function renderPCs(){
           <button class="ic-btn ic-sd" onclick="confirmOne('shutdown','${name}')">⏻</button>
           <button class="ic-btn ic-msg" onclick="confirmOne('message','${name}')">💬</button>
           <button class="ic-btn ic-cmd" onclick="confirmOne('cmd','${name}')">⌨️</button>
+          <button class="ic-btn ic-screen" onclick="viewScreen('${name}')">📺</button>
         `:''}
         <button class="ic-btn ic-del" onclick="confirmOne('remove','${name}')">🗑️</button>
       </div>
@@ -354,6 +367,31 @@ async function removePC(name){
   }catch{showToast('⚠️ Алдаа')}
 }
 
+// ================= SCREEN VIEW FUNCTIONS =================
+async function viewScreen(name) {
+  showToast('📺 Зураг ачаалж байна...');
+  try {
+    await fbPut(`pcs/${SECRET_KEY}/${name}/screen_request`, { active: true });
+    setTimeout(async () => {
+      try {
+        const data = await fbGet(`pcs/${SECRET_KEY}/${name}/screen_data`);
+        if (data && data.image) {
+          document.getElementById('screenImage').src = `data:image/jpeg;base64,${data.image}`;
+          document.getElementById('screenModal').classList.add('show');
+          await fbDelete(`pcs/${SECRET_KEY}/${name}/screen_data`);
+        } else {
+          showToast('⚠️ Зураг ирээгүй байна');
+        }
+      } catch (e) { showToast('⚠️ Алдаа'); }
+    }, 2000);
+  } catch (e) { showToast('⚠️ Алдаа'); }
+}
+
+function closeScreen() {
+  document.getElementById('screenModal').classList.remove('show');
+}
+
+// ================= HELPERS =================
 function timeAgo(s){if(s<60)return s+'с';if(s<3600)return Math.floor(s/60)+'м';return Math.floor(s/3600)+'ц'}
 
 let toastTimer;
