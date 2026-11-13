@@ -371,20 +371,33 @@ async function removePC(name){
 async function viewScreen(name) {
   showToast('📺 Зураг ачаалж байна...');
   try {
+    // 1. Хүсэлт илгээх
     await fbPut(`pcs/${SECRET_KEY}/${name}/screen_request`, { active: true });
+    
+    // 2. 2 секунд хүлээх (зураг ирэх цаг)
     setTimeout(async () => {
       try {
         const data = await fbGet(`pcs/${SECRET_KEY}/${name}/screen_data`);
         if (data && data.image) {
+          // Зургийг харуулах
           document.getElementById('screenImage').src = `data:image/jpeg;base64,${data.image}`;
           document.getElementById('screenModal').classList.add('show');
+          
+          // Зургийг Firebase-ээс устгах (ачааллыг багасгах)
           await fbDelete(`pcs/${SECRET_KEY}/${name}/screen_data`);
+          showToast('✅ Зураг устгагдлаа');
         } else {
           showToast('⚠️ Зураг ирээгүй байна');
         }
-      } catch (e) { showToast('⚠️ Алдаа'); }
+      } catch (e) { 
+        console.error(e);
+        showToast('⚠️ Зураг татахад алдаа'); 
+      }
     }, 2000);
-  } catch (e) { showToast('⚠️ Алдаа'); }
+  } catch (e) { 
+    console.error(e);
+    showToast('⚠️ Хүсэлт илгээхэд алдаа'); 
+  }
 }
 
 function closeScreen() {
