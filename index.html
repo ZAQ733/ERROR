@@ -6,15 +6,28 @@
 <title>Terminal - PC Control</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  
   body {
-    background-color: #050505;
-    color: #00ff41; /* Matrix green */
+    background-color: #000;
+    color: #00ff41;
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 15px;
     min-height: 100vh;
     padding: 20px;
     line-height: 1.5;
-    text-shadow: 0 0 2px rgba(0, 255, 65, 0.4); /* Neon glow */
+    text-shadow: 0 0 2px rgba(0, 255, 65, 0.4);
+    overflow: hidden;
+  }
+
+  /* ================= MATRIX BACKGROUND ================= */
+  #matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    opacity: 0.15; /* Арын дэвсгэрийн тодрол */
   }
 
   ::selection { background: #00ff41; color: #000; }
@@ -25,9 +38,10 @@
     margin: 10vh auto;
     padding: 30px;
     border: 1px solid #00ff41;
-    border-radius: 4px;
-    background: #000;
-    box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+    background: rgba(0, 0, 0, 0.85);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+    position: relative;
+    z-index: 10;
   }
   .setup-title { 
     font-size: 20px; 
@@ -67,7 +81,7 @@
   .setup-btn:hover { background: #00ffff; box-shadow: 0 0 10px #00ffff; }
 
   /* ================= TERMINAL UI ================= */
-  .terminal-container { display: none; max-width: 900px; margin: 0 auto; }
+  .terminal-container { display: none; max-width: 900px; margin: 0 auto; position: relative; z-index: 10; }
   .terminal-header {
     display: flex;
     justify-content: space-between;
@@ -97,7 +111,7 @@
     padding: 15px;
     height: 75vh;
     overflow-y: auto;
-    background: #000;
+    background: rgba(0, 0, 0, 0.8);
   }
 
   /* Scrollbar */
@@ -108,7 +122,7 @@
 
   .output { white-space: pre-wrap; word-break: break-all; margin-bottom: 5px; }
   .prompt-line { display: flex; margin-top: 5px; }
-  .prompt { color: #00ffff; margin-right: 8px; white-space: nowrap; font-weight: bold;}
+  .prompt { color: #00ffff; margin-right: 8px; white-space: nowrap; font-weight: bold; text-decoration: none !important;}
   
   input.term-input {
     background: transparent;
@@ -125,11 +139,25 @@
   .error { color: #ff003c; text-shadow: 0 0 2px rgba(255, 0, 60, 0.4); }
   .info { color: #00ffff; text-shadow: 0 0 2px rgba(0, 255, 255, 0.4); }
   .success { color: #00ff41; }
-  .highlight { color: #ffaa00; text-shadow: 0 0 2px rgba(255, 170, 0, 0.4); }
+  .highlight { color: #ffaa00; text-shadow: 0 0 2px rgba(255, 170, 0, 0.4); text-decoration: none !important;}
   .white { color: #ffffff; }
+  
+  /* Хөдөлгөөнтэй зураас */
+  .animated-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00ffff, transparent);
+    margin: 10px 0;
+    animation: scan 3s linear infinite;
+  }
+  @keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
 </style>
 </head>
 <body>
+
+<canvas id="matrix-bg"></canvas>
 
 <!-- SETUP SCREEN -->
 <div class="setup-container" id="setupScreen">
@@ -159,6 +187,49 @@
 </div>
 
 <script>
+// ==================== MATRIX BACKGROUND ANIMATION ====================
+const canvas = document.getElementById('matrix-bg');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
+const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const nums = '0123456789';
+const alphabet = katakana + latin + nums;
+
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+const drops = [];
+for (let x = 0; x < columns; x++) {
+    drops[x] = 1;
+}
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.fillStyle = '#00ff41';
+    ctx.font = fontSize + 'px monospace';
+    
+    for (let i = 0; i < drops.length; i++) {
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 35);
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
 // ==================== GLOBAL VARIABLES ====================
 let FIREBASE_URL = '';
 let SECRET_KEY = '';
@@ -289,7 +360,7 @@ async function showMainMenu() {
     document.getElementById('promptText').textContent = 'root@sys:~#';
     clearTerminal();
     print(`[ SYSTEM: ${BANG_NAME} ]`, 'white');
-    print('--------------------------------------------------', 'info');
+    print('<div class="animated-line"></div>', 'raw');
     
     await loadPCs();
     const now = Math.floor(Date.now() / 1000);
@@ -306,7 +377,8 @@ async function showMainMenu() {
             print(`[${index + 1}] ${name.padEnd(20)} ${status}`, color);
         });
     }
-    print('--------------------------------------------------', 'info');
+    
+    print('<div class="animated-line"></div>', 'raw');
     print("> Type node number to connect", 'highlight');
     print("> Type 'rename' to change node ID", 'highlight');
     print("> Type 'exit' to disconnect", 'highlight');
@@ -318,14 +390,14 @@ function showPcMenu(pcName) {
     document.getElementById('promptText').textContent = `node(${pcName})>`;
     clearTerminal();
     print(`[ CONNECTED TO NODE: ${pcName} ]`, 'white');
-    print('--------------------------------------------------', 'info');
+    print('<div class="animated-line"></div>', 'raw');
     print('[1] Terminate Power (Shutdown)', 'highlight');
     print('[2] Execute Payload (CMD)', 'highlight');
     print('[3] Transmit Message', 'highlight');
     print('[4] Wipe Node (Remove)', 'highlight');
     print('[5] Visual Feed (View Screen)', 'highlight');
     print('[0] Disconnect Node', 'highlight');
-    print('--------------------------------------------------', 'info');
+    print('<div class="animated-line"></div>', 'raw');
     print('Awaiting command (0-5):', 'info');
 }
 
@@ -397,6 +469,21 @@ async function performRename(oldName, newName) {
     
     print(`[+] Node ID updated successfully!`, 'success');
     setTimeout(showMainMenu, 1500);
+}
+
+// ==================== CUSTOM PRINT FOR HTML ====================
+// print() функц дээр animated-line ажиллуулахын тулд бага зэрэг өөрчилөв
+const originalPrint = print;
+print = function(text, className = '') {
+    if (className === 'raw') {
+        const div = document.createElement('div');
+        div.innerHTML = text;
+        document.getElementById('output').appendChild(div);
+    } else {
+        originalPrint(text, className);
+    }
+    const term = document.getElementById('terminalWindow');
+    term.scrollTop = term.scrollHeight;
 }
 
 // ==================== INPUT HANDLER ====================
