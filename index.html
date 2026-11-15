@@ -27,7 +27,7 @@
     width: 100vw;
     height: 100vh;
     z-index: -1;
-    opacity: 0.15; /* Арын дэвсгэрийн тодрол */
+    opacity: 0.15;
   }
 
   ::selection { background: #00ff41; color: #000; }
@@ -167,7 +167,7 @@
   <div class="setup-label">Auth Key</div>
   <input class="setup-input" type="password" id="keyInput" placeholder="...">
   <div class="setup-label">Terminal Name</div>
-  <input class="setup-input" type="text" id="nameInput" placeholder="e.g. MAIN_NODE" value="Insane PC Bang">
+  <input class="setup-input" type="text" id="nameInput" placeholder="e.g. MAIN_NODE">
   <button class="setup-btn" onclick="saveSetup()">Connect</button>
 </div>
 
@@ -195,9 +195,23 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
+const hangul = '가나다라마바사아자차카타파하ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ';
+const kanji = '一二三四五六七八九十百千万円年月日火水木金土曜日本語学校';
+const mongolian = 'ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ ᠪᠢᠴᠢᠭ';
 const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nums = '0123456789';
-const alphabet = katakana + latin + nums;
+const specialWords = ['ZAQ5K', '12B', 'FUCK SCHOOL', 'YABAYA', 'Made by ZAQ5K'];
+
+function getRandomChar() {
+    const rand = Math.random();
+    if (rand < 0.1) return specialWords[Math.floor(Math.random() * specialWords.length)];
+    if (rand < 0.25) return katakana.charAt(Math.floor(Math.random() * katakana.length));
+    if (rand < 0.4) return hangul.charAt(Math.floor(Math.random() * hangul.length));
+    if (rand < 0.5) return kanji.charAt(Math.floor(Math.random() * kanji.length));
+    if (rand < 0.55) return mongolian.charAt(Math.floor(Math.random() * mongolian.length));
+    if (rand < 0.75) return latin.charAt(Math.floor(Math.random() * latin.length));
+    return nums.charAt(Math.floor(Math.random() * nums.length));
+}
 
 const fontSize = 16;
 const columns = canvas.width / fontSize;
@@ -207,14 +221,14 @@ for (let x = 0; x < columns; x++) {
 }
 
 function drawMatrix() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     ctx.fillStyle = '#00ff41';
     ctx.font = fontSize + 'px monospace';
     
     for (let i = 0; i < drops.length; i++) {
-        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        const text = getRandomChar();
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
         
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
@@ -223,7 +237,9 @@ function drawMatrix() {
         drops[i]++;
     }
 }
-setInterval(drawMatrix, 35);
+
+// 35 fps хурдтай ажиллуулах (өмнөх шигээ)
+setInterval(drawMatrix, 1000 / 35);
 
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
@@ -283,7 +299,7 @@ function init() {
 function saveSetup() {
     const url = document.getElementById('urlInput').value.trim().replace(/\/$/, '');
     const key = document.getElementById('keyInput').value.trim();
-    const name = document.getElementById('nameInput').value.trim() || 'Insane PC Bang';
+    const name = document.getElementById('nameInput').value.trim() || 'Unnamed Node';
 
     if (!url.startsWith('https://')) { alert('ERROR: Invalid URL format.'); return; }
     if (!key) { alert('ERROR: Auth Key required.'); return; }
@@ -472,7 +488,6 @@ async function performRename(oldName, newName) {
 }
 
 // ==================== CUSTOM PRINT FOR HTML ====================
-// print() функц дээр animated-line ажиллуулахын тулд бага зэрэг өөрчилөв
 const originalPrint = print;
 print = function(text, className = '') {
     if (className === 'raw') {
