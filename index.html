@@ -155,9 +155,10 @@ let FIREBASE_URL = '';
 let SECRET_KEY = '';
 let BANG_NAME = 'PC Bang';
 let allPcData = {};
-let customNames = {}; // Хэрэглэгчийн өөрчилсөн нэрс хадгалах
+let customNames = {}; // Local-д хадгалагдах нэрс
 let currentMenu = 'main';
 let selectedPc = null;
+let renameTarget = null;
 
 // ==================== UI FUNCTIONS ====================
 function focusInput() { document.getElementById('cmdInput').focus(); }
@@ -192,7 +193,7 @@ function init() {
     const savedCustomNames = localStorage.getItem('pc_custom_names');
 
     if (savedCustomNames) {
-        customNames = JSON.parse(savedCustomNames);
+        try { customNames = JSON.parse(savedCustomNames); } catch(e){}
     }
 
     if (savedUrl && savedKey) {
@@ -229,7 +230,7 @@ function resetSettings() {
     localStorage.removeItem('pcbang_url');
     localStorage.removeItem('pcbang_key');
     localStorage.removeItem('pcbang_name');
-    localStorage.removeItem('pc_custom_names'); // Custom names-ийг ч бас устгана
+    localStorage.removeItem('pc_custom_names');
     location.reload();
 }
 
@@ -303,7 +304,7 @@ async function showMainMenu() {
             const status = isOnline ? '[ONLINE]' : '[OFFLINE]';
             const color = isOnline ? 'success' : 'error';
             
-            // Хэрэв custom name байвал түүнийг харуулах
+            // Хэрэв local-д custom name байвал түүнийг харуулах
             const displayName = customNames[origName] || origName;
             
             print(`[${index + 1}] ${displayName.padEnd(20)} ${status}`, color);
@@ -311,7 +312,6 @@ async function showMainMenu() {
     }
     
     print('<div class="animated-line"></div>', 'raw');
-    print('[r] Rename Node', 'highlight');
 }
 
 function showPcMenu(pcName) {
@@ -329,6 +329,7 @@ function showPcMenu(pcName) {
     print('[3] Transmit Message', 'highlight');
     print('[4] Wipe Node (Remove)', 'highlight');
     print('[5] Visual Feed (View Screen)', 'highlight');
+    print('[6] Rename Node (Local only)', 'highlight');
     print('[0] Disconnect Node', 'highlight');
     print('<div class="animated-line"></div>', 'raw');
 }
@@ -382,29 +383,6 @@ async function doViewScreen(pcName) {
     setTimeout(() => showPcMenu(pcName), 2000);
 }
 
-function doRename() {
-    clearTerminal();
-    document.getElementById('promptText').textContent = 'rename>';
-    currentMenu = 'rename_old';
-    print('Enter current Node ID (e.g., DESKTOP-KABUTO):', 'highlight');
-}
-
-async function performRename(oldName, newName) {
-    print(`[*] Changing display name for ${oldName} to ${newName}...`, 'info');
-    const data = allPcData[oldName];
-    if (!data) {
-        print(`[-] Error: Node '${oldName}' not found.`, 'error');
-        return showMainMenu();
-    }
-    
-    // Зөвхөн localStorage-д хадгалах
-    customNames[oldName] = newName;
-    localStorage.setItem('pc_custom_names', JSON.stringify(customNames));
-    
-    print(`[+] Display name updated successfully!`, 'success');
-    setTimeout(showMainMenu, 1500);
-}
-
 // ==================== CUSTOM PRINT FOR HTML ====================
 const originalPrint = print;
 print = function(text, className = '') {
@@ -429,13 +407,6 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
     print(`${document.getElementById('promptText').textContent} ${input}`, 'white');
 
     if (currentMenu === 'main') {
-        if (input.toLowerCase() === 'exit') {
-            print('Closing connection...', 'info');
-            return;
-        }
-        if (input.toLowerCase() === 'rename' || input.toLowerCase() === 'r') {
-            return doRename();
-        }
         const num = parseInt(input);
         const names = Object.keys(allPcData).filter(n => allPcData[n] && typeof allPcData[n] === 'object').sort();
         if (isNaN(num) || num < 1 || num > names.length) {
@@ -443,24 +414,6 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
             return;
         }
         showPcMenu(names[num - 1]);
-        return;
-    }
-
-    if (currentMenu === 'rename_old') {
-        const oldName = input;
-        if (!allPcData[oldName]) {
-            print(`[-] Node '${oldName}' not found.`, 'error');
-            return;
-        }
-        selectedPc = oldName;
-        currentMenu = 'rename_new';
-        document.getElementById('promptText').textContent = 'new_id>';
-        print(`Enter new display name for ${oldName}:`, 'highlight');
-        return;
-    }
-
-    if (currentMenu === 'rename_new') {
-        await performRename(selectedPc, input);
         return;
     }
 
@@ -482,7 +435,22 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
         }
         if (choice === '4') return doRemove(selectedPc);
         if (choice === '5') return doViewScreen(selectedPc);
-        print('[-] Invalid command. Select 0-5.', 'error');
+        if (choice === '6') {
+            currentMenu = 'rename_new';
+            document.getElementById('promptText').textContent = 'new_name>';
+            print(`Enter new display name for ${customNames[selectedPc] || selectedPc}:`, 'highlight');
+            return;
+        }
+        print('[-] Invalid command. Select 0-6.', 'error');
+        return;
+    }
+
+    if (currentMenu === 'rename_new') {
+        // Local нэрийг солих
+        customNames[selectedPc] = input;
+        localStorage.setItem('pc_custom_names', JSON.stringify(customNames));
+        print(`[+] Local display name updated successfully!`, 'success');
+        setTimeout(() => showPcMenu(selectedPc), 1500);
         return;
     }
 
