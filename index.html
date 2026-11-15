@@ -238,7 +238,6 @@ function drawMatrix() {
     }
 }
 
-// 35 fps хурдтай ажиллуулах (өмнөх шигээ)
 setInterval(drawMatrix, 1000 / 35);
 
 window.addEventListener('resize', () => {
@@ -395,9 +394,6 @@ async function showMainMenu() {
     }
     
     print('<div class="animated-line"></div>', 'raw');
-    print("> Type node number to connect", 'highlight');
-    print("> Type 'rename' to change node ID", 'highlight');
-    print("> Type 'exit' to disconnect", 'highlight');
 }
 
 function showPcMenu(pcName) {
@@ -414,7 +410,6 @@ function showPcMenu(pcName) {
     print('[5] Visual Feed (View Screen)', 'highlight');
     print('[0] Disconnect Node', 'highlight');
     print('<div class="animated-line"></div>', 'raw');
-    print('Awaiting command (0-5):', 'info');
 }
 
 async function doShutdown(pcName) {
