@@ -253,6 +253,7 @@ let BANG_NAME = 'PC Bang';
 let allPcData = {};
 let currentMenu = 'main';
 let selectedPc = null;
+let renameTarget = null;
 
 // ==================== UI FUNCTIONS ====================
 function focusInput() { document.getElementById('cmdInput').focus(); }
@@ -394,6 +395,7 @@ async function showMainMenu() {
     }
     
     print('<div class="animated-line"></div>', 'raw');
+    print('[r] Rename Node', 'highlight');
 }
 
 function showPcMenu(pcName) {
@@ -460,7 +462,7 @@ async function doViewScreen(pcName) {
     setTimeout(() => showPcMenu(pcName), 2000);
 }
 
-async function doRename() {
+function doRename() {
     clearTerminal();
     document.getElementById('promptText').textContent = 'rename>';
     currentMenu = 'rename_old';
@@ -510,7 +512,7 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
             print('Closing connection...', 'info');
             return;
         }
-        if (input.toLowerCase() === 'rename') {
+        if (input.toLowerCase() === 'rename' || input.toLowerCase() === 'r') {
             return doRename();
         }
         const num = parseInt(input);
