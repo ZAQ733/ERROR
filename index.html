@@ -19,7 +19,6 @@
     overflow: hidden;
   }
 
-  /* ================= MATRIX BACKGROUND ================= */
   #matrix-bg {
     position: fixed;
     top: 0;
@@ -32,7 +31,6 @@
 
   ::selection { background: #00ff41; color: #000; }
 
-  /* ================= SETUP UI ================= */
   .setup-container {
     max-width: 450px;
     margin: 10vh auto;
@@ -43,78 +41,20 @@
     position: relative;
     z-index: 10;
   }
-  .setup-title { 
-    font-size: 20px; 
-    font-weight: bold; 
-    margin-bottom: 25px; 
-    text-align: center; 
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
+  .setup-title { font-size: 20px; font-weight: bold; margin-bottom: 25px; text-align: center; letter-spacing: 2px; text-transform: uppercase; }
   .setup-label { font-size: 12px; color: #00ffff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
-  .setup-input {
-    width: 100%;
-    background: transparent;
-    border: 1px solid #005500;
-    color: #00ff41;
-    padding: 10px;
-    margin-bottom: 20px;
-    font-family: inherit;
-    outline: none;
-    transition: border 0.3s;
-  }
+  .setup-input { width: 100%; background: transparent; border: 1px solid #005500; color: #00ff41; padding: 10px; margin-bottom: 20px; font-family: inherit; outline: none; transition: border 0.3s; }
   .setup-input:focus { border-color: #00ff41; box-shadow: 0 0 5px rgba(0, 255, 65, 0.5); }
-  .setup-btn {
-    width: 100%;
-    background: #00ff41;
-    color: #000;
-    border: none;
-    padding: 12px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    font-family: inherit;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: 0.3s;
-  }
+  .setup-btn { width: 100%; background: #00ff41; color: #000; border: none; padding: 12px; font-weight: bold; font-size: 14px; cursor: pointer; font-family: inherit; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
   .setup-btn:hover { background: #00ffff; box-shadow: 0 0 10px #00ffff; }
 
-  /* ================= TERMINAL UI ================= */
   .terminal-container { display: none; max-width: 900px; margin: 0 auto; position: relative; z-index: 10; }
-  .terminal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #005500;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    font-size: 12px;
-    color: #008800;
-  }
+  .terminal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #005500; padding-bottom: 10px; margin-bottom: 15px; font-size: 12px; color: #008800; }
   .term-title { text-transform: uppercase; letter-spacing: 1px; }
-  .reset-btn {
-    background: transparent;
-    color: #ff003c;
-    border: 1px solid #ff003c;
-    padding: 4px 8px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 11px;
-    text-transform: uppercase;
-    transition: 0.3s;
-  }
+  .reset-btn { background: transparent; color: #ff003c; border: 1px solid #ff003c; padding: 4px 8px; cursor: pointer; font-family: inherit; font-size: 11px; text-transform: uppercase; transition: 0.3s; }
   .reset-btn:hover { background: #ff003c; color: #000; box-shadow: 0 0 8px #ff003c; }
 
-  .terminal-window {
-    border: 1px solid #005500;
-    padding: 15px;
-    height: 75vh;
-    overflow-y: auto;
-    background: rgba(0, 0, 0, 0.8);
-  }
-
-  /* Scrollbar */
+  .terminal-window { border: 1px solid #005500; padding: 15px; height: 75vh; overflow-y: auto; background: rgba(0, 0, 0, 0.8); }
   .terminal-window::-webkit-scrollbar { width: 8px; }
   .terminal-window::-webkit-scrollbar-track { background: #000; }
   .terminal-window::-webkit-scrollbar-thumb { background: #005500; }
@@ -123,43 +63,22 @@
   .output { white-space: pre-wrap; word-break: break-all; margin-bottom: 5px; }
   .prompt-line { display: flex; margin-top: 5px; }
   .prompt { color: #00ffff; margin-right: 8px; white-space: nowrap; font-weight: bold; text-decoration: none !important;}
+  input.term-input { background: transparent; border: none; color: #00ff41; font-family: 'Consolas', 'Courier New', monospace; font-size: 15px; outline: none; flex: 1; text-shadow: 0 0 2px rgba(0, 255, 65, 0.4); }
   
-  input.term-input {
-    background: transparent;
-    border: none;
-    color: #00ff41;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 15px;
-    outline: none;
-    flex: 1;
-    text-shadow: 0 0 2px rgba(0, 255, 65, 0.4);
-  }
-  
-  /* Text Colors */
   .error { color: #ff003c; text-shadow: 0 0 2px rgba(255, 0, 60, 0.4); }
   .info { color: #00ffff; text-shadow: 0 0 2px rgba(0, 255, 255, 0.4); }
   .success { color: #00ff41; }
   .highlight { color: #ffaa00; text-shadow: 0 0 2px rgba(255, 170, 0, 0.4); text-decoration: none !important;}
   .white { color: #ffffff; }
   
-  /* Хөдөлгөөнтэй зураас */
-  .animated-line {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #00ffff, transparent);
-    margin: 10px 0;
-    animation: scan 3s linear infinite;
-  }
-  @keyframes scan {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
+  .animated-line { height: 1px; background: linear-gradient(90deg, transparent, #00ffff, transparent); margin: 10px 0; animation: scan 3s linear infinite; }
+  @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 </style>
 </head>
 <body>
 
 <canvas id="matrix-bg"></canvas>
 
-<!-- SETUP SCREEN -->
 <div class="setup-container" id="setupScreen">
   <div class="setup-title">> SYSTEM INITIALIZATION_</div>
   <div class="setup-label">Target Database URL</div>
@@ -171,7 +90,6 @@
   <button class="setup-btn" onclick="saveSetup()">Connect</button>
 </div>
 
-<!-- MAIN TERMINAL SCREEN -->
 <div class="terminal-container" id="terminalScreen">
   <div class="terminal-header">
     <div class="term-title" id="termTitle">Node: ... | Status: CONNECTED</div>
@@ -187,10 +105,9 @@
 </div>
 
 <script>
-// ==================== MATRIX BACKGROUND ANIMATION ====================
+// ==================== MATRIX BACKGROUND ====================
 const canvas = document.getElementById('matrix-bg');
 const ctx = canvas.getContext('2d');
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -216,44 +133,31 @@ function getRandomChar() {
 const fontSize = 16;
 const columns = canvas.width / fontSize;
 const drops = [];
-for (let x = 0; x < columns; x++) {
-    drops[x] = 1;
-}
+for (let x = 0; x < columns; x++) drops[x] = 1;
 
 function drawMatrix() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
     ctx.fillStyle = '#00ff41';
     ctx.font = fontSize + 'px monospace';
-    
     for (let i = 0; i < drops.length; i++) {
         const text = getRandomChar();
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-        }
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
     }
 }
-
 setInterval(drawMatrix, 1000 / 35);
-
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
 // ==================== GLOBAL VARIABLES ====================
 let FIREBASE_URL = '';
 let SECRET_KEY = '';
 let BANG_NAME = 'PC Bang';
-
 let allPcData = {};
+let customNames = {}; // Хэрэглэгчийн өөрчилсөн нэрс хадгалах
 let currentMenu = 'main';
 let selectedPc = null;
-let renameTarget = null;
 
 // ==================== UI FUNCTIONS ====================
 function focusInput() { document.getElementById('cmdInput').focus(); }
@@ -285,6 +189,11 @@ function init() {
     const savedUrl = localStorage.getItem('pcbang_url');
     const savedKey = localStorage.getItem('pcbang_key');
     const savedName = localStorage.getItem('pcbang_name');
+    const savedCustomNames = localStorage.getItem('pc_custom_names');
+
+    if (savedCustomNames) {
+        customNames = JSON.parse(savedCustomNames);
+    }
 
     if (savedUrl && savedKey) {
         FIREBASE_URL = savedUrl;
@@ -320,6 +229,7 @@ function resetSettings() {
     localStorage.removeItem('pcbang_url');
     localStorage.removeItem('pcbang_key');
     localStorage.removeItem('pcbang_name');
+    localStorage.removeItem('pc_custom_names'); // Custom names-ийг ч бас устгана
     location.reload();
 }
 
@@ -380,17 +290,23 @@ async function showMainMenu() {
     
     await loadPCs();
     const now = Math.floor(Date.now() / 1000);
-    const names = Object.keys(allPcData).filter(n => allPcData[n] && typeof allPcData[n] === 'object').sort();
     
-    if (names.length === 0) {
+    // Firebase-с ирсэн нэрсийг customNames-ээр сольж харуулах
+    const originalNames = Object.keys(allPcData).filter(n => allPcData[n] && typeof allPcData[n] === 'object').sort();
+    
+    if (originalNames.length === 0) {
         print("[!] No active nodes found.", 'error');
     } else {
-        names.forEach((name, index) => {
-            const d = allPcData[name];
+        originalNames.forEach((origName, index) => {
+            const d = allPcData[origName];
             const isOnline = (now - (d.last_seen || 0)) < 15;
             const status = isOnline ? '[ONLINE]' : '[OFFLINE]';
             const color = isOnline ? 'success' : 'error';
-            print(`[${index + 1}] ${name.padEnd(20)} ${status}`, color);
+            
+            // Хэрэв custom name байвал түүнийг харуулах
+            const displayName = customNames[origName] || origName;
+            
+            print(`[${index + 1}] ${displayName.padEnd(20)} ${status}`, color);
         });
     }
     
@@ -401,9 +317,12 @@ async function showMainMenu() {
 function showPcMenu(pcName) {
     currentMenu = 'pc_action';
     selectedPc = pcName;
-    document.getElementById('promptText').textContent = `node(${pcName})>`;
+    // Сонгосон PC-ийн custom name-ийг харуулах
+    const displayName = customNames[pcName] || pcName;
+    
+    document.getElementById('promptText').textContent = `node(${displayName})>`;
     clearTerminal();
-    print(`[ CONNECTED TO NODE: ${pcName} ]`, 'white');
+    print(`[ CONNECTED TO NODE: ${displayName} ]`, 'white');
     print('<div class="animated-line"></div>', 'raw');
     print('[1] Terminate Power (Shutdown)', 'highlight');
     print('[2] Execute Payload (CMD)', 'highlight');
@@ -416,31 +335,32 @@ function showPcMenu(pcName) {
 
 async function doShutdown(pcName) {
     await fbPut(`${pcPath(pcName)}/shutdown`, true);
-    print(`[+] Kill signal sent to ${pcName}.`, 'success');
+    print(`[+] Kill signal sent to ${customNames[pcName] || pcName}.`, 'success');
     setTimeout(() => showPcMenu(pcName), 1500);
 }
 
 async function doSendCmd(pcName, cmd) {
     await fbPut(`${pcPath(pcName)}/cmd_visible`, cmd);
-    print(`[+] Payload executed on ${pcName}: ${cmd}`, 'success');
+    print(`[+] Payload executed on ${customNames[pcName] || pcName}: ${cmd}`, 'success');
     setTimeout(() => showPcMenu(pcName), 1500);
 }
 
 async function doSendMsg(pcName, msg) {
     await fbPut(`${pcPath(pcName)}/message`, msg);
     await fbPut(`${pcPath(pcName)}/msg_title`, BANG_NAME);
-    print(`[+] Message transmitted to ${pcName}.`, 'success');
+    print(`[+] Message transmitted to ${customNames[pcName] || pcName}.`, 'success');
     setTimeout(() => showPcMenu(pcName), 1500);
 }
 
 async function doRemove(pcName) {
     await fbPut(`${pcPath(pcName)}/remove`, true);
-    print(`[+] Wipe command sent to ${pcName}.`, 'success');
+    print(`[+] Wipe command sent to ${customNames[pcName] || pcName}.`, 'success');
     setTimeout(showMainMenu, 1500);
 }
 
 async function doViewScreen(pcName) {
-    print(`[*] Requesting visual feed from ${pcName}...`, 'info');
+    const displayName = customNames[pcName] || pcName;
+    print(`[*] Requesting visual feed from ${displayName}...`, 'info');
     await fbPut(`${pcPath(pcName)}/screen_request`, { active: true });
     
     let data = null;
@@ -454,7 +374,7 @@ async function doViewScreen(pcName) {
     if (data && data.image) {
         print(`[+] Frame received. Bypassing sandbox...`, 'success');
         const w = window.open('', '_blank');
-        w.document.write(`<html><head><title>FEED - ${pcName}</title></head><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="data:image/jpeg;base64,${data.image}" style="max-width:100%;max-height:100%;box-shadow: 0 0 20px rgba(0,255,65,0.3);"></body></html>`);
+        w.document.write(`<html><head><title>FEED - ${displayName}</title></head><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="data:image/jpeg;base64,${data.image}" style="max-width:100%;max-height:100%;box-shadow: 0 0 20px rgba(0,255,65,0.3);"></body></html>`);
         await fbDelete(`${pcPath(pcName)}/screen_data`);
     } else {
         print(`[-] Timeout. No frame received.`, 'error');
@@ -466,21 +386,22 @@ function doRename() {
     clearTerminal();
     document.getElementById('promptText').textContent = 'rename>';
     currentMenu = 'rename_old';
-    print('Enter current Node ID:', 'highlight');
+    print('Enter current Node ID (e.g., DESKTOP-KABUTO):', 'highlight');
 }
 
 async function performRename(oldName, newName) {
-    print(`[*] Reassigning Node ID: ${oldName} -> ${newName}...`, 'info');
+    print(`[*] Changing display name for ${oldName} to ${newName}...`, 'info');
     const data = allPcData[oldName];
     if (!data) {
         print(`[-] Error: Node '${oldName}' not found.`, 'error');
         return showMainMenu();
     }
     
-    await fbPut(pcPath(newName), data);
-    await fbDelete(pcPath(oldName));
+    // Зөвхөн localStorage-д хадгалах
+    customNames[oldName] = newName;
+    localStorage.setItem('pc_custom_names', JSON.stringify(customNames));
     
-    print(`[+] Node ID updated successfully!`, 'success');
+    print(`[+] Display name updated successfully!`, 'success');
     setTimeout(showMainMenu, 1500);
 }
 
@@ -534,7 +455,7 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
         selectedPc = oldName;
         currentMenu = 'rename_new';
         document.getElementById('promptText').textContent = 'new_id>';
-        print(`Enter new Node ID for ${oldName}:`, 'highlight');
+        print(`Enter new display name for ${oldName}:`, 'highlight');
         return;
     }
 
@@ -549,13 +470,13 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
         if (choice === '1') return doShutdown(selectedPc);
         if (choice === '2') {
             currentMenu = 'cmd_input';
-            document.getElementById('promptText').textContent = `[${selectedPc}] cmd>`;
+            document.getElementById('promptText').textContent = `[${customNames[selectedPc] || selectedPc}] cmd>`;
             print('Enter payload command:', 'highlight');
             return;
         }
         if (choice === '3') {
             currentMenu = 'msg_input';
-            document.getElementById('promptText').textContent = `[${selectedPc}] msg>`;
+            document.getElementById('promptText').textContent = `[${customNames[selectedPc] || selectedPc}] msg>`;
             print('Enter message:', 'highlight');
             return;
         }
