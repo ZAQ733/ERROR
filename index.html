@@ -1,126 +1,158 @@
 <!DOCTYPE html>
-<html lang="mn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>PC Bang Control</title>
+<title>Terminal - PC Control</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background-color: #000;
-    color: #0f0;
+    background-color: #050505;
+    color: #00ff41; /* Matrix green */
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 15px;
     min-height: 100vh;
     padding: 20px;
-    line-height: 1.4;
+    line-height: 1.5;
+    text-shadow: 0 0 2px rgba(0, 255, 65, 0.4); /* Neon glow */
   }
+
+  ::selection { background: #00ff41; color: #000; }
 
   /* ================= SETUP UI ================= */
   .setup-container {
-    max-width: 500px;
-    margin: 50px auto;
+    max-width: 450px;
+    margin: 10vh auto;
     padding: 30px;
-    border: 1px solid #0f0;
-    border-radius: 8px;
-    background: #050505;
+    border: 1px solid #00ff41;
+    border-radius: 4px;
+    background: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
   }
-  .setup-title { font-size: 22px; font-weight: bold; margin-bottom: 20px; text-align: center; }
-  .setup-label { font-size: 13px; color: #0aa; margin-bottom: 5px; }
+  .setup-title { 
+    font-size: 20px; 
+    font-weight: bold; 
+    margin-bottom: 25px; 
+    text-align: center; 
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .setup-label { font-size: 12px; color: #00ffff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
   .setup-input {
     width: 100%;
-    background: #000;
-    border: 1px solid #0f0;
-    color: #0f0;
+    background: transparent;
+    border: 1px solid #005500;
+    color: #00ff41;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-family: inherit;
     outline: none;
+    transition: border 0.3s;
   }
-  .setup-input:focus { border-color: #0ff; }
+  .setup-input:focus { border-color: #00ff41; box-shadow: 0 0 5px rgba(0, 255, 65, 0.5); }
   .setup-btn {
     width: 100%;
-    background: #0f0;
+    background: #00ff41;
     color: #000;
     border: none;
     padding: 12px;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     font-family: inherit;
-    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s;
   }
-  .setup-btn:hover { background: #0ff; }
+  .setup-btn:hover { background: #00ffff; box-shadow: 0 0 10px #00ffff; }
 
   /* ================= TERMINAL UI ================= */
-  .terminal-container { display: none; }
+  .terminal-container { display: none; max-width: 900px; margin: 0 auto; }
   .terminal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #0f0;
+    border-bottom: 1px solid #005500;
     padding-bottom: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: #008800;
   }
-  .terminal-title { font-size: 16px; font-weight: bold; }
+  .term-title { text-transform: uppercase; letter-spacing: 1px; }
   .reset-btn {
     background: transparent;
-    color: #f00;
-    border: 1px solid #f00;
-    padding: 5px 10px;
+    color: #ff003c;
+    border: 1px solid #ff003c;
+    padding: 4px 8px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    transition: 0.3s;
   }
-  .reset-btn:hover { background: #f00; color: #000; }
+  .reset-btn:hover { background: #ff003c; color: #000; box-shadow: 0 0 8px #ff003c; }
 
   .terminal-window {
-    border: 1px solid #0f0;
+    border: 1px solid #005500;
     padding: 15px;
-    height: 80vh;
+    height: 75vh;
     overflow-y: auto;
     background: #000;
   }
-  .output { white-space: pre-wrap; word-break: break-all; }
+
+  /* Scrollbar */
+  .terminal-window::-webkit-scrollbar { width: 8px; }
+  .terminal-window::-webkit-scrollbar-track { background: #000; }
+  .terminal-window::-webkit-scrollbar-thumb { background: #005500; }
+  .terminal-window::-webkit-scrollbar-thumb:hover { background: #00ff41; }
+
+  .output { white-space: pre-wrap; word-break: break-all; margin-bottom: 5px; }
   .prompt-line { display: flex; margin-top: 5px; }
-  .prompt { color: #0f0; margin-right: 5px; white-space: nowrap; }
+  .prompt { color: #00ffff; margin-right: 8px; white-space: nowrap; font-weight: bold;}
+  
   input.term-input {
     background: transparent;
     border: none;
-    color: #0f0;
+    color: #00ff41;
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 15px;
     outline: none;
     flex: 1;
+    text-shadow: 0 0 2px rgba(0, 255, 65, 0.4);
   }
-  .error { color: #f00; }
-  .info { color: #0ff; }
-  .success { color: #0f0; }
-  .highlight { color: #ff0; }
+  
+  /* Text Colors */
+  .error { color: #ff003c; text-shadow: 0 0 2px rgba(255, 0, 60, 0.4); }
+  .info { color: #00ffff; text-shadow: 0 0 2px rgba(0, 255, 255, 0.4); }
+  .success { color: #00ff41; }
+  .highlight { color: #ffaa00; text-shadow: 0 0 2px rgba(255, 170, 0, 0.4); }
+  .white { color: #ffffff; }
 </style>
 </head>
 <body>
 
 <!-- SETUP SCREEN -->
 <div class="setup-container" id="setupScreen">
-  <div class="setup-title">⚙️ ТОХИРГОО</div>
-  <div class="setup-label">Firebase URL</div>
+  <div class="setup-title">> SYSTEM INITIALIZATION_</div>
+  <div class="setup-label">Target Database URL</div>
   <input class="setup-input" type="text" id="urlInput" placeholder="https://...">
-  <div class="setup-label">Secret Key</div>
+  <div class="setup-label">Auth Key</div>
   <input class="setup-input" type="password" id="keyInput" placeholder="...">
-  <button class="setup-btn" onclick="saveSetup()">ХОЛБОГДОХ</button>
+  <div class="setup-label">Terminal Name</div>
+  <input class="setup-input" type="text" id="nameInput" placeholder="e.g. MAIN_NODE" value="Insane PC Bang">
+  <button class="setup-btn" onclick="saveSetup()">Connect</button>
 </div>
 
 <!-- MAIN TERMINAL SCREEN -->
 <div class="terminal-container" id="terminalScreen">
   <div class="terminal-header">
-    <div class="terminal-title" id="termTitle">PC Bang Control - Terminal</div>
-    <button class="reset-btn" onclick="resetSettings()">RESET (LOGOUT)</button>
+    <div class="term-title" id="termTitle">Node: ... | Status: CONNECTED</div>
+    <button class="reset-btn" onclick="resetSettings()">Terminate Session</button>
   </div>
   <div class="terminal-window" id="terminalWindow" onclick="focusInput()">
     <div class="output" id="output"></div>
     <div class="prompt-line">
-      <span class="prompt" id="promptText">C:\&gt;</span>
+      <span class="prompt" id="promptText">root@sys:~#</span>
       <input type="text" class="term-input" id="cmdInput" autocomplete="off" spellcheck="false">
     </div>
   </div>
@@ -180,23 +212,24 @@ function init() {
 function saveSetup() {
     const url = document.getElementById('urlInput').value.trim().replace(/\/$/, '');
     const key = document.getElementById('keyInput').value.trim();
+    const name = document.getElementById('nameInput').value.trim() || 'Insane PC Bang';
 
-    if (!url.startsWith('https://')) { alert('URL буруу байна!'); return; }
-    if (!key) { alert('Secret Key хоосон байна!'); return; }
+    if (!url.startsWith('https://')) { alert('ERROR: Invalid URL format.'); return; }
+    if (!key) { alert('ERROR: Auth Key required.'); return; }
 
     localStorage.setItem('pcbang_url', url);
     localStorage.setItem('pcbang_key', key);
-    localStorage.setItem('pcbang_name', 'Insane PC Bang'); // Эсвэл гараар оруулж болно
+    localStorage.setItem('pcbang_name', name);
 
     FIREBASE_URL = url;
     SECRET_KEY = key;
-    BANG_NAME = 'Insane PC Bang';
+    BANG_NAME = name;
 
     showTerminal();
 }
 
 function resetSettings() {
-    if (!confirm('Та тохиргоог устгаж, дахин нэвтрэхдээ итгэлтэй байна уу?')) return;
+    if (!confirm('Are you sure you want to terminate the session?')) return;
     localStorage.removeItem('pcbang_url');
     localStorage.removeItem('pcbang_key');
     localStorage.removeItem('pcbang_name');
@@ -235,11 +268,12 @@ function pcsPath() { return `pcs/${SECRET_KEY}`; }
 // ==================== TERMINAL LOGIC ====================
 async function startTerminal() {
     clearTerminal();
-    document.getElementById('termTitle').textContent = `${BANG_NAME} - Terminal`;
-    print('==========================================', 'info');
-    print('     PC BANG TERMINAL v1.0 (Web)', 'info');
-    print('==========================================', 'info');
-    print(`Connected to: ${BANG_NAME}`, 'success');
+    document.getElementById('termTitle').textContent = `Node: ${BANG_NAME} | Status: CONNECTED`;
+    print('==================================================', 'info');
+    print('       SECURE TERMINAL INTERFACE v2.0', 'success');
+    print('==================================================', 'info');
+    print(`> Connection established with: ${BANG_NAME}`, 'white');
+    print('> Fetching network nodes...', 'info');
     print('');
     showMainMenu();
     focusInput();
@@ -252,115 +286,116 @@ async function loadPCs() {
 
 async function showMainMenu() {
     currentMenu = 'main';
-    document.getElementById('promptText').textContent = 'C:\\>';
+    document.getElementById('promptText').textContent = 'root@sys:~#';
     clearTerminal();
-    print(`=== ${BANG_NAME} CONTROL ===`, 'info');
-    print('');
+    print(`[ SYSTEM: ${BANG_NAME} ]`, 'white');
+    print('--------------------------------------------------', 'info');
     
     await loadPCs();
     const now = Math.floor(Date.now() / 1000);
     const names = Object.keys(allPcData).filter(n => allPcData[n] && typeof allPcData[n] === 'object').sort();
     
     if (names.length === 0) {
-        print("No PCs registered.", 'error');
+        print("[!] No active nodes found.", 'error');
     } else {
         names.forEach((name, index) => {
             const d = allPcData[name];
             const isOnline = (now - (d.last_seen || 0)) < 15;
-            const status = isOnline ? 'ONLINE' : 'OFFLINE';
+            const status = isOnline ? '[ONLINE]' : '[OFFLINE]';
             const color = isOnline ? 'success' : 'error';
-            print(`[${index + 1}] ${name.padEnd(20)} - ${status}`, color);
+            print(`[${index + 1}] ${name.padEnd(20)} ${status}`, color);
         });
     }
-    print('');
-    print("Type PC number, 'rename', or 'exit'.", 'highlight');
+    print('--------------------------------------------------', 'info');
+    print("> Type node number to connect", 'highlight');
+    print("> Type 'rename' to change node ID", 'highlight');
+    print("> Type 'exit' to disconnect", 'highlight');
 }
 
 function showPcMenu(pcName) {
     currentMenu = 'pc_action';
     selectedPc = pcName;
-    document.getElementById('promptText').textContent = `[${pcName}]>`;
+    document.getElementById('promptText').textContent = `node(${pcName})>`;
     clearTerminal();
-    print(`=== ${pcName} CONTROL ===`, 'info');
-    print('');
-    print('[1] Shutdown', 'highlight');
-    print('[2] Send CMD Command', 'highlight');
-    print('[3] Send Message', 'highlight');
-    print('[4] Remove PC', 'highlight');
-    print('[5] View Screen', 'highlight');
-    print('[0] Back', 'highlight');
-    print('');
-    print('Select action (0-5):', 'highlight');
+    print(`[ CONNECTED TO NODE: ${pcName} ]`, 'white');
+    print('--------------------------------------------------', 'info');
+    print('[1] Terminate Power (Shutdown)', 'highlight');
+    print('[2] Execute Payload (CMD)', 'highlight');
+    print('[3] Transmit Message', 'highlight');
+    print('[4] Wipe Node (Remove)', 'highlight');
+    print('[5] Visual Feed (View Screen)', 'highlight');
+    print('[0] Disconnect Node', 'highlight');
+    print('--------------------------------------------------', 'info');
+    print('Awaiting command (0-5):', 'info');
 }
 
 async function doShutdown(pcName) {
     await fbPut(`${pcPath(pcName)}/shutdown`, true);
-    print(`[+] Shutdown command sent to ${pcName}.`, 'success');
+    print(`[+] Kill signal sent to ${pcName}.`, 'success');
     setTimeout(() => showPcMenu(pcName), 1500);
 }
 
 async function doSendCmd(pcName, cmd) {
     await fbPut(`${pcPath(pcName)}/cmd_visible`, cmd);
-    print(`[+] CMD sent to ${pcName}: ${cmd}`, 'success');
+    print(`[+] Payload executed on ${pcName}: ${cmd}`, 'success');
     setTimeout(() => showPcMenu(pcName), 1500);
 }
 
 async function doSendMsg(pcName, msg) {
     await fbPut(`${pcPath(pcName)}/message`, msg);
     await fbPut(`${pcPath(pcName)}/msg_title`, BANG_NAME);
-    print(`[+] Message sent to ${pcName}.`, 'success');
+    print(`[+] Message transmitted to ${pcName}.`, 'success');
     setTimeout(() => showPcMenu(pcName), 1500);
 }
 
 async function doRemove(pcName) {
     await fbPut(`${pcPath(pcName)}/remove`, true);
-    print(`[+] Remove command sent to ${pcName}.`, 'success');
+    print(`[+] Wipe command sent to ${pcName}.`, 'success');
     setTimeout(showMainMenu, 1500);
 }
 
 async function doViewScreen(pcName) {
-    print(`[*] Requesting screen from ${pcName}...`, 'info');
+    print(`[*] Requesting visual feed from ${pcName}...`, 'info');
     await fbPut(`${pcPath(pcName)}/screen_request`, { active: true });
     
     let data = null;
     for (let i = 0; i < 10; i++) {
         await new Promise(r => setTimeout(r, 1000));
-        print(`    Waiting for image... (${i+1}s)`);
+        print(`    > Downloading frame... (${i+1}s)`);
         data = await fbGet(`${pcPath(pcName)}/screen_data`);
         if (data && data.image) break;
     }
     
     if (data && data.image) {
-        print(`[+] Image received!`, 'success');
-        // Шинэ цонхонд зураг нээх
+        print(`[+] Frame received. Bypassing sandbox...`, 'success');
         const w = window.open('', '_blank');
-        w.document.write(`<html><head><title>Screen - ${pcName}</title></head><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="data:image/jpeg;base64,${data.image}" style="max-width:100%;max-height:100%;"></body></html>`);
+        w.document.write(`<html><head><title>FEED - ${pcName}</title></head><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="data:image/jpeg;base64,${data.image}" style="max-width:100%;max-height:100%;box-shadow: 0 0 20px rgba(0,255,65,0.3);"></body></html>`);
         await fbDelete(`${pcPath(pcName)}/screen_data`);
     } else {
-        print(`[-] No image received within 10 seconds.`, 'error');
+        print(`[-] Timeout. No frame received.`, 'error');
     }
     setTimeout(() => showPcMenu(pcName), 2000);
 }
 
 async function doRename() {
     clearTerminal();
-    document.getElementById('promptText').textContent = 'Rename>';
+    document.getElementById('promptText').textContent = 'rename>';
     currentMenu = 'rename_old';
-    print('Enter the current PC name (e.g., DESKTOP-KABUTO):', 'highlight');
+    print('Enter current Node ID:', 'highlight');
 }
 
 async function performRename(oldName, newName) {
-    print(`[*] Renaming ${oldName} to ${newName}...`, 'info');
+    print(`[*] Reassigning Node ID: ${oldName} -> ${newName}...`, 'info');
     const data = allPcData[oldName];
     if (!data) {
-        print(`[-] Error: PC '${oldName}' not found.`, 'error');
+        print(`[-] Error: Node '${oldName}' not found.`, 'error');
         return showMainMenu();
     }
     
     await fbPut(pcPath(newName), data);
     await fbDelete(pcPath(oldName));
     
-    print(`[+] Successfully renamed!`, 'success');
+    print(`[+] Node ID updated successfully!`, 'success');
     setTimeout(showMainMenu, 1500);
 }
 
@@ -371,11 +406,11 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
     document.getElementById('cmdInput').value = '';
     if (!input && currentMenu !== 'msg_input' && currentMenu !== 'cmd_input') return;
 
-    print(`${document.getElementById('promptText').textContent} ${input}`);
+    print(`${document.getElementById('promptText').textContent} ${input}`, 'white');
 
     if (currentMenu === 'main') {
         if (input.toLowerCase() === 'exit') {
-            print('Exiting terminal...', 'info');
+            print('Closing connection...', 'info');
             return;
         }
         if (input.toLowerCase() === 'rename') {
@@ -384,7 +419,7 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
         const num = parseInt(input);
         const names = Object.keys(allPcData).filter(n => allPcData[n] && typeof allPcData[n] === 'object').sort();
         if (isNaN(num) || num < 1 || num > names.length) {
-            print('[-] Invalid number. Type "rename" or "exit".', 'error');
+            print('[-] Invalid Node ID.', 'error');
             return;
         }
         showPcMenu(names[num - 1]);
@@ -394,13 +429,13 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
     if (currentMenu === 'rename_old') {
         const oldName = input;
         if (!allPcData[oldName]) {
-            print(`[-] PC '${oldName}' not found. Try again.`, 'error');
+            print(`[-] Node '${oldName}' not found.`, 'error');
             return;
         }
         selectedPc = oldName;
         currentMenu = 'rename_new';
-        document.getElementById('promptText').textContent = 'New Name>';
-        print(`Enter new name for ${oldName}:`, 'highlight');
+        document.getElementById('promptText').textContent = 'new_id>';
+        print(`Enter new Node ID for ${oldName}:`, 'highlight');
         return;
     }
 
@@ -415,19 +450,19 @@ document.getElementById('cmdInput').addEventListener('keydown', async (e) => {
         if (choice === '1') return doShutdown(selectedPc);
         if (choice === '2') {
             currentMenu = 'cmd_input';
-            document.getElementById('promptText').textContent = `[${selectedPc}] CMD>`;
-            print('Enter CMD command (e.g., ipconfig):', 'highlight');
+            document.getElementById('promptText').textContent = `[${selectedPc}] cmd>`;
+            print('Enter payload command:', 'highlight');
             return;
         }
         if (choice === '3') {
             currentMenu = 'msg_input';
-            document.getElementById('promptText').textContent = `[${selectedPc}] MSG>`;
+            document.getElementById('promptText').textContent = `[${selectedPc}] msg>`;
             print('Enter message:', 'highlight');
             return;
         }
         if (choice === '4') return doRemove(selectedPc);
         if (choice === '5') return doViewScreen(selectedPc);
-        print('[-] Invalid choice. Select 0-5.', 'error');
+        print('[-] Invalid command. Select 0-5.', 'error');
         return;
     }
 
